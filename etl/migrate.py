@@ -219,6 +219,7 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
         SELECT cd_applications.id, cd_applications.ticket_id,
             cd_applications.session_id, cd_applications.event_id,
             cd_applications.dojo_id, cd_applications.user_id,
+            cd_applications.attendances,
             dates, country, city
         FROM cd_applications
         INNER JOIN cd_events ON cd_applications.event_id = cd_events.id
@@ -230,10 +231,11 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
             event_id,
             session_id,
             ticket_id,
+            checked_in,
             time,
             location_id,
             id
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', map(stage(dw_cursor), events_cursor.fetchall()))
         print('Populated staging')
         sys.stdout.flush()
@@ -252,7 +254,7 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
         dw_cursor.execute('''
         SELECT "staging".dojo_id, "staging".ticket_id, "staging".session_id,
             "staging".event_id, "staging".user_id, "staging".time,
-            "staging".location_id, "staging".badge_id
+            "staging".location_id, "staging".badge_id, "staging".checked_in
         FROM "staging"
         INNER JOIN "dimDojos"
         ON "staging".dojo_id = "dimDojos".id
@@ -275,8 +277,9 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
                 time,
                 location_id,
                 id,
-                badge_id
-            ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s)
+                badge_id,
+                checked_in,
+            ) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', map(get_id, ids))
     except (psycopg2.Error) as e:
         raise (e)

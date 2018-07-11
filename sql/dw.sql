@@ -13,6 +13,8 @@ SET default_tablespace = '';
 
 SET default_with_oids = false;
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS "dimBadges" (
     badge_id character varying(40) NOT NULL,
     type character varying(40),
@@ -69,6 +71,7 @@ CREATE TABLE IF NOT EXISTS "dimDojos" (
 );
 
 CREATE TABLE IF NOT EXISTS "dimEvents" (
+    id character varying(40) NOT NULL DEFAULT uuid_generate_v1(),
     event_id character varying(40) NOT NULL,
     recurring_type character varying(40),
     country character varying(40),
@@ -80,7 +83,8 @@ CREATE TABLE IF NOT EXISTS "dimEvents" (
     is_eb boolean,
     status character varying(40),
     start_time timestamp without time zone,
-    CONSTRAINT "dimEvents_pkey" PRIMARY KEY (event_id)
+    CONSTRAINT "dimEvents_pkey" PRIMARY KEY (event_id, start_time)
+    CONSTRAINT "dimEvents_ukey" PRIMARY KEY (event_id, start_time)
 );
 
 CREATE TABLE IF NOT EXISTS "dimLocation" (
@@ -120,6 +124,7 @@ CREATE TABLE IF NOT EXISTS "factUsers" (
     time timestamp without time zone,
     location_id character varying(40),
     id character varying(40) NOT NULL,
+    checked_in boolean,
     CONSTRAINT "factUsers_pkey" PRIMARY KEY (id)
 );
 
@@ -133,6 +138,7 @@ CREATE TABLE IF NOT EXISTS staging (
     time timestamp without time zone,
     location_id character varying(40),
     badge_id character varying(40),
+    checked_in boolean,
     CONSTRAINT "PK_staging" PRIMARY KEY (id)
 );
 
