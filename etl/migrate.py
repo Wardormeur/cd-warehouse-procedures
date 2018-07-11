@@ -85,7 +85,7 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
         sys.stdout.flush()
 
         # Queries - Events
-        events_cursor.execute('SELECT * FROM cd_events')
+        events_cursor.execute('SELECT cd_events.*, d.date->>\'startTime\' as startTime FROM cd_events LEFT OUTER JOIN (SELECT id, unnest(dates) as date FROM cd_events) d ON d.id = cd_events.id')
         dw_cursor.executemany('''
             INSERT INTO "public"."dimEvents"(
                 event_id,
@@ -97,9 +97,10 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
                 dojo_id,
                 public,
                 status,
-                is_eb
+                is_eb,
+                startTime
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', map(transform_event, events_cursor.fetchall()))
         print("Inserted all events and locations")
         sys.stdout.flush()
