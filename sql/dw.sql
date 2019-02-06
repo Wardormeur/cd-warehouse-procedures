@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS "dimDojos" (
     inactive smallint,
     inactive_at timestamp with time zone,
     is_eb smallint,
+    private smallint,
     lead_id character varying(40),
     url character varying(400),
     CONSTRAINT "PK_dimDojos" PRIMARY KEY (id)
