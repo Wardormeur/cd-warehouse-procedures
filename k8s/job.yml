@@ -4,7 +4,7 @@ metadata:
   name: warehouse-migration
   namespace: warehouse
 spec:
-  activeDeadlineSeconds: 600
+  activeDeadlineSeconds: 1200 
   template:
     metadata:
       name: warehouse-migration
