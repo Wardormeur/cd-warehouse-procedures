@@ -9,11 +9,11 @@ def transform_dojo(row):  # Transform / Load for Dojo Dimension
         row['country'] is
         not None) and (len(row['country'])) > 0 else 'Unknown'
     city = row['city']['name'] if (
-        row['city'] is not None) and (len(row['city']['name'])) > 0 else 'Unknown'
+        row['city'] is not None) and ('name' in row['city']) else 'Unknown'
     county = row['county']['name'] if (
-        row['county'] is not None) and (len(row['county']['name'])) > 0 else 'Unknown'
+        row['county'] is not None) and ('name' in row['county']) else 'Unknown'
     state = row['state']['name'] if (
-        row['state'] is not None) and (len(row['state']['name'])) > 0 else 'Unknown'
+        row['state'] is not None) and ('name' in row['state']) else 'Unknown'
 
     continent = row['continent']
     tao_verified = row['tao_verified']
