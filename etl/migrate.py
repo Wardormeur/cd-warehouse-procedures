@@ -193,6 +193,10 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
             application->'champion'->>'confidentMentoring' as "confidence_mentoring",
             application->'venue'->>'type' as "venue_type", 
             application->'venue'->>'alternativeType' as "alternative_venue_type",
+            application->'venue'->'country'->>'countryName' as "country",
+            application->'venue'->'city'->>'name' as "city",
+            application->'venue'->'county'->>'name' as "county",
+            application->'venue'->'state'->>'name' as "state",
             application->'champion'->>'reference' as "referer",
             application->'champion'->>'alternativeReference' as "alternative_referer",
             application->'team'->>'status' as "has_mentors",
@@ -222,6 +226,10 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
                 confidence_mentoring,
                 venue_type,
                 alternative_venue_type,
+                country,
+                city,
+                county,
+                state,
                 referer,
                 alternative_referer,
                 has_mentors,
@@ -238,7 +246,7 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
                 created_at,
                 updated_at,
                 completed_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', map(transform_lead, dojos_cursor.fetchall()))
         print('Inserted leads')
         sys.stdout.flush()
