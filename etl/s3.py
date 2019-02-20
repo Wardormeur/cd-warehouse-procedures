@@ -16,7 +16,7 @@ def download(db):
         aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
     s3 = session.resource('s3')
     bucket = s3.Bucket(aws_bucket)
-    sBackups = bucket.objects.filter(Prefix='zen' + db)
+    sBackups = bucket.objects.filter(Prefix='daily/zen' + db)
     obj = sorted(
         sBackups, key=lambda s3_object: s3_object.last_modified,
         reverse=True)[0]
