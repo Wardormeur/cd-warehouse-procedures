@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS "dimDojoLeads" (
     mentor_students boolean,
     mentor_youth_u18 boolean,
     mentor_other character varying(5000),
+    first_session character varying(20),
     requested_email boolean, 
     completion smallint,
     created_at timestamp without time zone,
