@@ -1,5 +1,6 @@
 def transform_dojo(row):  # Transform / Load for Dojo Dimension
     dojo_id = row['id']
+    name = row['name']
     created_at = row['created']
     verified_at = row['verified_at']
     stage = row['stage']
@@ -29,7 +30,7 @@ def transform_dojo(row):  # Transform / Load for Dojo Dimension
     deleted = row['deleted']
     url = 'https://zen.coderdojo.com/dojos/' + row['url_slug']
 
-    return (dojo_id, created_at, verified_at, stage, country, city, county,
+    return (dojo_id, name, created_at, verified_at, stage, country, city, county,
             state, continent, tao_verified, expected_attendees, verified, private,
             deleted, inactive, inactive_at, is_eb, dojo_lead_id, url)
 

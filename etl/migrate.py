@@ -47,6 +47,7 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
         dw_cursor.executemany('''
             INSERT INTO "public"."dimDojos"(
                 id,
+                name,
                 created,
                 verified_at,
                 stage,
@@ -65,7 +66,7 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
                 is_eb,
                 lead_id,
                 url)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', map(transform_dojo, dojos_cursor.fetchall()))
         print("Inserted all dojos")
         sys.stdout.flush()

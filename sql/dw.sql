@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS "dimDojos" (
     private smallint,
     lead_id character varying(40),
     url character varying(400),
+    name character varying(150),
     CONSTRAINT "PK_dimDojos" PRIMARY KEY (id)
 );
 
