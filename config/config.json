@@ -14,5 +14,8 @@
     "bucket": "zen-pg-backup",
     "access": "",
     "secret": ""
-  }
+  },
+  "regional_bodies": [
+    { "name": "demo", "password": "test" }
+  ]
 }

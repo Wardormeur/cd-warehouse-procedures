@@ -12,6 +12,7 @@ import psycopg2.extras
 from clean_up import clean_databases, reset_databases
 from migrate import migrate_db, setup_warehouse
 from restore import restore_db
+from sql_users import insert_users, drop_users
 from s3 import download
 
 with open('./config/config.json') as data:
@@ -35,6 +36,8 @@ async def get(name, dev):
 
 
 def main():
+    dw_cursor = None
+    cursor = None
     parser = argparse.ArgumentParser(
         description='migrate production databases backups to datawarehouse')
     parser.add_argument('--dev', action='store_true',
@@ -56,8 +59,10 @@ def main():
         # cdDataWarehouse
         dw_conn = psycopg2.connect(
             dbname=dw, host=db_host, user=db_user, password=db_password)
-        dw_cursor = dw_conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         dw_conn.set_session(autocommit=True)
+        dw_cursor = dw_conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        # Before reimporting anything, we ensure rb users are locked out
+        drop_users(dw_cursor)
 
         # Download and restore db in parallel
         loop = asyncio.get_event_loop()
@@ -87,6 +92,8 @@ def main():
 
         migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor)
         print("Databases Migrated")
+        insert_users(dw_cursor)
+        print("Regional bodies access restored")
         sys.stdout.flush()
 
         # Close Database connections and delete the dev databases
@@ -100,11 +107,13 @@ def main():
         sys.exit(0)
     except (psycopg2.Error) as e:
         print(e)
-        clean_databases(cursor, dojos, events, users)
-        print("Removed ", dojos, events, users)
-        cursor.close
+        if dw_cursor:
+            drop_users(dw_cursor)
+        if cursor:
+            clean_databases(cursor, dojos, events, users)
+            print("Removed ", dojos, events, users)
+            cursor.close
         sys.exit(1)
-
 
 if __name__ == '__main__':
     main()

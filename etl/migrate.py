@@ -8,7 +8,7 @@ from events import transform_event
 from measures import get_id
 from staging import stage
 from tickets import transform_ticket
-from leads import transform_lead 
+from leads import transform_lead
 from users import transform_user
 from logins import transform_login
 
@@ -36,10 +36,10 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
 
         # Queries - Dojos
         dojos_cursor.execute('''
-            SELECT * FROM cd_dojos 
+            SELECT * FROM cd_dojos
             LEFT JOIN (
-                SELECT dojo_id, max(updated_at) as inactive_at 
-                FROM audit.dojo_stage 
+                SELECT dojo_id, max(updated_at) as inactive_at
+                FROM audit.dojo_stage
                 WHERE stage = 4 GROUP BY dojo_id)
             as q ON q.dojo_id = cd_dojos.id
             WHERE verified = 1 and deleted = 0
@@ -132,10 +132,10 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
         print("Inserted all users")
         sys.stdout.flush()
 
-        # Queries - Logins 
+        # Queries - Logins
         users_cursor.execute('''
             SELECT *
-            FROM sys_login 
+            FROM sys_login
         ''')
         dw_cursor.executemany('''
             INSERT INTO "public"."dimLogins"(
@@ -186,13 +186,13 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
             ''', transform_badges(row))
         print('Inserted badges')
         sys.stdout.flush()
-        
-        # Queries - Leads 
+
+        # Queries - Leads
         dojos_cursor.execute('''
         SELECT id, user_id,
             application->'champion'->>'confidentCoding' as "confidence_coding",
             application->'champion'->>'confidentMentoring' as "confidence_mentoring",
-            application->'venue'->>'type' as "venue_type", 
+            application->'venue'->>'type' as "venue_type",
             application->'venue'->>'alternativeType' as "alternative_venue_type",
             application->'venue'->'country'->>'countryName' as "country",
             application->'venue'->'city'->>'name' as "city",
@@ -296,13 +296,13 @@ def migrate_db(dw_cursor, users_cursor, dojos_cursor, events_cursor):
             "staging".event_id, "staging".user_id, "staging".time,
             "staging".location_id, "staging".badge_id, "staging".checked_in
         FROM "staging"
-         INNER JOIN "dimDojos"		
-          ON "staging".dojo_id = "dimDojos".id		
-        INNER JOIN "dimUsers"		
-          ON "staging".user_id = "dimUsers".user_id		
-        INNER JOIN "dimLocation" ON		
-          "staging".location_id = "dimLocation".location_id		
-        INNER JOIN "dimBadges"		
+         INNER JOIN "dimDojos"
+          ON "staging".dojo_id = "dimDojos".id
+        INNER JOIN "dimUsers"
+          ON "staging".user_id = "dimUsers".user_id
+        INNER JOIN "dimLocation" ON
+          "staging".location_id = "dimLocation".location_id
+        INNER JOIN "dimBadges"
           ON "staging".badge_id = "dimBadges".badge_id
          GROUP BY "staging".event_id, "staging".dojo_id, "staging".ticket_id, "staging".session_id,
             "staging".event_id, "staging".user_id, "staging".time,
